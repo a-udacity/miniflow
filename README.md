@@ -1,3 +1,5 @@
+If you want to practice on your own, check out my initial commit from master.
+The latest commit contains my solution.
 Learning and Loss
 
 Like MiniFlow in its current state, neural networks take inputs and produce outputs. But unlike MiniFlow in its current state, neural networks can improve the accuracy of their outputs over time (it's hard to imagine improving the accuracy of Add over time!). To explore why accuracy matters, I want you to first implement a trickier (and more useful!) node than Add: the Linear node.
