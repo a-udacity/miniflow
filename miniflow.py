@@ -23,7 +23,6 @@ class Neuron:
         Compute the output value based on `inbound_neurons` and
         store the result in self.value.
         """
-        raise NotImplemented
 
 
 class Input(Neuron):
@@ -64,6 +63,11 @@ class Linear(Neuron):
 
         Your code goes here!
         """
+        weighted_input_sum = 0
+        for index in range(len(self.inbound_neurons)):
+            weighted_input_sum = weighted_input_sum + (self.inbound_neurons[index].value * self.weights[index].value)
+
+        self.value = weighted_input_sum + self.bias.value
 
 
 def topological_sort(feed_dict):
