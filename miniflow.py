@@ -63,11 +63,9 @@ class Linear(Neuron):
 
         Your code goes here!
         """
-        weighted_input_sum = 0
-        for index in range(len(self.inbound_neurons)):
-            weighted_input_sum = weighted_input_sum + (self.inbound_neurons[index].value * self.weights[index].value)
-
-        self.value = weighted_input_sum + self.bias.value
+        self.value = self.bias.value
+        for w, x in zip(self.weights, self.inbound_neurons):
+            self.value += w.value * x.value
 
 
 def topological_sort(feed_dict):
