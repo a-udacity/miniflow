@@ -1,26 +1,27 @@
+"""
+Test your MSE method with this script!
+
+No changes necessary, but feel free to play
+with this script to test your network.
+"""
+
+import numpy as np
 from miniflow import *
 
-x, y, z = Input(), Input(), Input()
-inputs = [x, y, z]
+y, a = Input(), Input()
+cost = MSE(y, a) 
 
-weight_x, weight_y, weight_z = Input(), Input(), Input()
-weights = [weight_x, weight_y, weight_z]
+y_ = np.array([1, 2, 3])
+a_ = np.array([4.5, 5, 10])
 
-bias = Input()
-
-f = Linear(inputs, weights, bias)
-
-feed_dict = {
-	x: 6,
-	y: 14,
-	z: 3,
-	weight_x: 0.5,
-	weight_y: 0.25,
-	weight_z: 1.4,
-	bias: 2
-}
-
+feed_dict = {y: y_, a: a_}
 graph = topological_sort(feed_dict)
-output = forward_pass(f, graph)
+# forward pass
+forward_pass(graph)
 
-print(output) # should be 12.7 with this example
+"""
+Expected output
+
+23.4166666667
+"""
+print(cost.value)
