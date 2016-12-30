@@ -15,10 +15,10 @@ class Layer:
         for layer in inbound_layers:
             layer.outbound_layers.append(self)
 
-    def forward():
+    def forward(self):
         raise NotImplementedError
 
-    def backward():
+    def backward(self):
         raise NotImplementedError
 
 
@@ -71,6 +71,7 @@ class Sigmoid(Layer):
 
         Your code here!
         """
+        return 1. / (1. + np.exp(-x))   # the `.` ensures that `1` is a float
 
 
     def forward(self):
@@ -82,7 +83,8 @@ class Sigmoid(Layer):
         """
         # This is a dummy value to prevent numpy errors
         # if you test without changing this method.
-        self.value = -1
+        input_value = self.inbound_layers[0].value
+        self.value = self._sigmoid(input_value)
 
 
 def topological_sort(feed_dict):
