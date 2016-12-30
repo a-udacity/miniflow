@@ -1,99 +1,90 @@
 """
-Write the Linear#forward method below!
+Modify Linear#forward so that it linearly transforms
+input matrices, weights matrices and a bias vector to
+an output.
 """
 
+import numpy as np
 
-class Neuron:
-    def __init__(self, inbound_neurons=[]):
-        # Neurons from which this Node receives values
-        self.inbound_neurons = inbound_neurons
-        # Neurons to which this Node passes values
-        self.outbound_neurons = []
-        # A calculated value
+class Layer:
+    def __init__(self, inbound_layers=[]):
+        self.inbound_layers = inbound_layers
         self.value = None
-        # Add this node as an outbound node on its inputs.
-        for n in self.inbound_neurons:
-            n.outbound_neurons.append(self)
+        self.outbound_layers = []
+        for layer in inbound_layers:
+            layer.outbound_layers.append(self)
 
-    # These will be implemented in a subclass.
-    def forward(self):
-        """
-        Forward propagation.
-
-        Compute the output value based on `inbound_neurons` and
-        store the result in self.value.
-        """
+    def forward():
+        raise NotImplementedError
 
 
-class Input(Neuron):
+class Input(Layer):
+    """
+    While it may be strange to consider an input a layer when
+    an input is only an individual node in a layer, for the sake
+    of simpler code we'll still use Layer as the base class.
+
+    Think of Input as collating many individual input nodes into
+    a Layer.
+    """
     def __init__(self):
-        # An Input Neuron has no inbound neurons,
-        # so no need to pass anything to the Neuron instantiator
-        Neuron.__init__(self)
+        # An Input layer has no inbound layers,
+        # so no need to pass anything to the Layer instantiator
+        Layer.__init__(self)
 
-        # NOTE: Input Neuron is the only Neuron where the value
-        # may be passed as an argument to forward().
-        #
-        # All other Neuron implementations should get the value
-        # of the previous neurons from self.inbound_neurons
-        #
-        # Example:
-        # val0 = self.inbound_neurons[0].value
-
-    def forward(self, value=None):
-        # Overwrite the value if one is passed in.
-        if value is not None:
-            self.value = value
+    def forward(self):
+        # Do nothing because nothing is calculated.
+        pass
 
 
-class Linear(Neuron):
-    def __init__(self, inputs, weights, bias):
-        Neuron.__init__(self, inputs)
-
-        # NOTE: The weights and bias properties here are not
-        # numbers, but rather references to other neurons.
-        # The weight and bias values are stored within the
-        # respective neurons.
-        self.weights = weights
-        self.bias = bias
+class Linear(Layer):
+    def __init__(self, inbound_layer, weights, bias):
+        # Notice the ordering of the input layers passed to the
+        # Layer constructor.
+        Layer.__init__(self, [inbound_layer, weights, bias])
 
     def forward(self):
         """
-        Set self.value to the value of the linear function output.
+        Set the value of this layer to the linear transform output.
 
         Your code goes here!
         """
-        self.value = self.bias.value
-        for w, x in zip(self.weights, self.inbound_neurons):
-            self.value += w.value * x.value
+        layers = self.inbound_layers
+        x = np.array(layers[0].value)
+        # print(x)
+        w = np.array(layers[1].value)
+        # print(w)
+        b = np.array(layers[2].value)
+        # print(b)
+        self.value = np.dot(x, w) + b
 
 
 def topological_sort(feed_dict):
     """
-    Sort the neurons in topological order using Kahn's Algorithm.
+    Sort the layers in topological order using Kahn's Algorithm.
 
-    `feed_dict`: A dictionary where the key is a `Input` Neuron and the value is the respective value feed to that Neuron.
+    `feed_dict`: A dictionary where the key is a `Input` Layer and the value is the respective value feed to that Layer.
 
-    Returns a list of sorted neurons.
+    Returns a list of sorted layers.
     """
 
-    input_neurons = [n for n in feed_dict.keys()]
+    input_layers = [n for n in feed_dict.keys()]
 
     G = {}
-    neurons = [n for n in input_neurons]
-    while len(neurons) > 0:
-        n = neurons.pop(0)
+    layers = [n for n in input_layers]
+    while len(layers) > 0:
+        n = layers.pop(0)
         if n not in G:
             G[n] = {'in': set(), 'out': set()}
-        for m in n.outbound_neurons:
+        for m in n.outbound_layers:
             if m not in G:
                 G[m] = {'in': set(), 'out': set()}
             G[n]['out'].add(m)
             G[m]['in'].add(n)
-            neurons.append(m)
+            layers.append(m)
 
     L = []
-    S = set(input_neurons)
+    S = set(input_layers)
     while len(S) > 0:
         n = S.pop()
 
@@ -101,7 +92,7 @@ def topological_sort(feed_dict):
             n.value = feed_dict[n]
 
         L.append(n)
-        for m in n.outbound_neurons:
+        for m in n.outbound_layers:
             G[n]['out'].remove(m)
             G[m]['in'].remove(n)
             # if no other incoming edges add to S
@@ -110,19 +101,19 @@ def topological_sort(feed_dict):
     return L
 
 
-def forward_pass(output_Neuron, sorted_neurons):
+def forward_pass(output_layer, sorted_layers):
     """
-    Performs a forward pass through a list of sorted neurons.
+    Performs a forward pass through a list of sorted Layers.
 
     Arguments:
 
-        `output_Neuron`: A Neuron in the graph, should be the output Neuron (have no outgoing edges).
-        `sorted_neurons`: a topologically sorted list of neurons.
+        `output_layer`: A Layer in the graph, should be the output layer (have no outgoing edges).
+        `sorted_layers`: a topologically sorted list of layers.
 
-    Returns the output Neuron's value
+    Returns the output layer's value
     """
 
-    for n in sorted_neurons:
+    for n in sorted_layers:
         n.forward()
 
-    return output_Neuron.value
+    return output_layer.value
