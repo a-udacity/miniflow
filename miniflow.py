@@ -50,13 +50,13 @@ class Linear(Layer):
         Your code goes here!
         """
         layers = self.inbound_layers
-        x = np.array(layers[0].value)
-        # print(x)
-        w = np.array(layers[1].value)
-        # print(w)
-        b = np.array(layers[2].value)
-        # print(b)
-        self.value = np.dot(x, w) + b
+        inputs = np.array(layers[0].value)
+        # print(inputs)
+        weights = np.array(layers[1].value)
+        # print(weights)
+        bias = np.array(layers[2].value)
+        # print(bias)
+        self.value = np.dot(inputs, weights) + bias
 
 
 def topological_sort(feed_dict):
