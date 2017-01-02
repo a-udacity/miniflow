@@ -153,6 +153,9 @@ class Sigmoid(Layer):
             
             NOTE: See the Linear layer and MSE layer for examples.
             """
+            sigmoid = self.value
+            self.gradients[self.inbound_layers[0]] += sigmoid * (1 - sigmoid) * grad_cost
+
 
 
 class MSE(Layer):
