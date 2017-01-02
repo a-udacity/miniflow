@@ -1,26 +1,44 @@
+"""
+Test your network here!
+
+No need to change this code, but feel free to tweak it
+to test your network!
+
+Make your changes to backward method of the Sigmoid class in miniflow.py
+"""
+
+import numpy as np
 from miniflow import *
 
-x, y, z = Input(), Input(), Input()
-inputs = [x, y, z]
+X, W, b = Input(), Input(), Input()
+y = Input()
+f = Linear(X, W, b)
+a = Sigmoid(f)
+cost = MSE(y, a)
 
-weight_x, weight_y, weight_z = Input(), Input(), Input()
-weights = [weight_x, weight_y, weight_z]
-
-bias = Input()
-
-f = Linear(inputs, weights, bias)
+X_ = np.array([[-1., -2.], [-1, -2]])
+W_ = np.array([[2.], [3.]])
+b_ = np.array([-3.])
+y_ = np.array([1, 2])
 
 feed_dict = {
-	x: 6,
-	y: 14,
-	z: 3,
-	weight_x: 0.5,
-	weight_y: 0.25,
-	weight_z: 1.4,
-	bias: 2
+    X: X_,
+    y: y_,
+    W: W_,
+    b: b_,
 }
 
 graph = topological_sort(feed_dict)
-output = forward_pass(f, graph)
+forward_and_backward(graph)
+# return the gradients for each Input
+gradients = [t.gradients[t] for t in [X, y, W, b]]
 
-print(output) # should be 12.7 with this example
+"""
+Expected output
+
+[array([[ -3.34017280e-05,  -5.01025919e-05],
+       [ -6.68040138e-05,  -1.00206021e-04]]), array([[ 0.9999833],
+       [ 1.9999833]]), array([[  5.01028709e-05],
+       [  1.00205742e-04]]), array([ -5.01028709e-05])]
+"""
+print(gradients)
