@@ -252,9 +252,16 @@ def sgd_update(trainables, learning_rate=1e-2):
         `trainables`: A list of `Input` Layers representing weights/biases.
         `learning_rate`: The learning rate.
     """
+    # As a reminder, here 's the gradient descent update equation, where α represents the learning rate:
+    # x = x−α∗​∂x​​∂cost​​
+    #
     # TODO: update all the `trainables` with SGD
     # You can access and assign the value of a trainable with `value` attribute.
     # Example:
     # for t in trainables:
     #   t.value = your implementation here
-    pass
+    for t in trainables:
+       #  grad_cost = t.gradients
+       # t = t - learning_rate * grad_cost
+        partial = t.gradients[t]
+        t.value -= learning_rate * partial
